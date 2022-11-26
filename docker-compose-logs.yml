@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  loki:
+
+services:
+  loki:
+    image: grafana/loki:2.3.0
+    ports:
+      - "3100:3100"
+    volumes:
+      - /home/eduvalor371/promtailloki/loki-config.yaml:/etc/loki/config/loki-config.yaml
+    command: -config.file=/etc/loki/config/loki-config.yaml
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.3.0
+    volumes:
+      - /home/eduvalor371/backend_eduvalor/logs:/var/log
+      - /home/eduvalor371/promtailloki/promtail-config.yaml:/etc/promtail/config/promtail-config.yaml
+    command: -config.file=/etc/promtail/config/promtail-config.yaml
+    networks:
+      - loki
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - loki
